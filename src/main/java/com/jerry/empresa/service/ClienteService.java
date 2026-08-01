@@ -5,7 +5,7 @@ import com.jerry.empresa.repository.ClienteRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 public class ClienteService {
@@ -25,13 +25,14 @@ public class ClienteService {
     public Cliente createCliente(Cliente cliente){
         return clienteRepository.save(cliente);
     }
-    public Cliente upadteCliente(Long id, Cliente clienteDetails){
+    public Cliente updateCliente(Long id, Cliente clienteDetails){
         Cliente cliente = getClienteById(id);
         cliente.setNombre(clienteDetails.getNombre());
         cliente.setEmail(clienteDetails.getEmail());
         return clienteRepository.save(cliente);
-
-
-
+    }
+    public void deleteCliente(Long id){
+        Cliente cliente = getClienteById(id);
+        clienteRepository.delete(cliente);
     }
 }
