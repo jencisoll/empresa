@@ -3,9 +3,13 @@ package com.jerry.empresa.controller;
 import com.jerry.empresa.entity.Cliente;
 import com.jerry.empresa.service.ClienteService;
 import org.springframework.http.HttpStatus;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import java.util.List;
+import java.net.URI;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/clientes")
@@ -16,12 +20,14 @@ public class ClienteController {
         this.clienteService=clienteService;
     }
     @GetMapping
-    public ResponseEntity<List<Cliente>> getAllClientes(){
-        return ResponseEntity.ok(clienteService.getAllClientes());
+    public List<Cliente> getClienteById(){
+        return clienteService.getClienteById();
     }
     @GetMapping("/{id}")
     public ResponseEntity<Cliente> getClientesById(@PathVariable Long id){
-        return ResponseEntity.ok(clienteService.getClienteById(id));
+        return clienteService.getClienteById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
     @PostMapping
     public ResponseEntity<Cliente> createClientesById(@RequestBody Cliente cliente){
@@ -29,7 +35,7 @@ public class ClienteController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Cliente>updateCliente(@PathVariable Long id, @RequestBody Cliente cliente){
+    public ResponseEntity<Cliente>updateCliente(@PathVariable Long id,  @RequestBody Cliente cliente){
         return ResponseEntity.ok(clienteService.updateCliente(id, cliente));
     }
     @DeleteMapping("/{id}")

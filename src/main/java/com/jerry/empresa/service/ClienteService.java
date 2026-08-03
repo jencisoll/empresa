@@ -5,6 +5,7 @@ import com.jerry.empresa.repository.ClienteRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -14,7 +15,7 @@ public class ClienteService {
         this.clienteRepository = clienteRepository;
     }
 
-    public List<Cliente> getAllClientes() {
+    public List<Cliente> getClienteById() {
         return clienteRepository.findAll();
     }
 
