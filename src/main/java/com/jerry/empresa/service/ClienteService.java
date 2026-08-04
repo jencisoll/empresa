@@ -11,29 +11,41 @@ import java.util.Optional;
 @Service
 public class ClienteService {
     private final ClienteRepository clienteRepository;
+
     public ClienteService(ClienteRepository clienteRepository) {
         this.clienteRepository = clienteRepository;
     }
 
-    public List<Cliente> getClienteById() {
+    public List<Cliente> listar() {
         return clienteRepository.findAll();
     }
 
-    public Cliente getClienteById(Long id) {
-        return clienteRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado: " + id));
+    public Optional<Cliente> obtenerPorId(Long id) {
+        return clienteRepository.findById(id);
     }
-    public Cliente createCliente(Cliente cliente){
+
+    public Cliente crear(Cliente cliente) {
+        clienteRepository.findByEmail(cliente.getEmail()).ifPresent(c -> {
+            throw new IllegalArgumentException("Ya existe un cliente con ese email");
+        });
         return clienteRepository.save(cliente);
     }
-    public Cliente updateCliente(Long id, Cliente clienteDetails){
-        Cliente cliente = getClienteById(id);
-        cliente.setNombre(clienteDetails.getNombre());
-        cliente.setEmail(clienteDetails.getEmail());
-        return clienteRepository.save(cliente);
+
+
+    public Cliente actualizar(Long id, Cliente datos) {
+        Cliente actual = clienteRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Cliente no encontrado"));
+
+        actual.setNombre(datos.getNombre());
+        actual.setEmail(datos.getEmail());
+        return clienteRepository.save(actual);
     }
-    public void deleteCliente(Long id){
-        Cliente cliente = getClienteById(id);
-        clienteRepository.delete(cliente);
+
+    public void eliminar(Long id) {
+        if (!clienteRepository.existsById(id)) {
+            throw new IllegalArgumentException("Cliente no encontrado");
+        }
+
+        clienteRepository.deleteById(id);
     }
 }
